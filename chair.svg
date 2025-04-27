@@ -1,0 +1,10 @@
+<svg width="80" height="100" xmlns="http://www.w3.org/2000/svg">
+  <path
+  d="M30 1V80M30 40H79V79M1 20V99M1 59H49V99M1 20L30 1M1 59L30 40M49 59L79 40M1 31L30 11M1 41L30 21" 
+  fill="none"
+  stroke="black"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  />
+  <path d="M1 59L49 59L79 40L31 40" fill="black" />
+</svg>

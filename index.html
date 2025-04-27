@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=0"
+    />
+    <title>Tycoon</title>
+    <script src="https://raikou320.github.io/rai.js/rai.min.js"></script>
+  </head>
+  <body>
+    <style>
+      canvas {
+        width: min(90vw, 90vh, 900px);
+        height: min(90vw, 90vh, 900px);
+      }
+    </style>
+    <script>
+      let lockedImage;
+      let coins = 0;
+      let incrementor = 1;
+      let coinsPerSeconds = 0;
+      const coinToClick = {
+        x: 330,
+        y: 322,
+        width: 240,
+        height: 256,
+        image: null,
+      };
+      const shopUpgrade = {
+        x: 650,
+        y: 200,
+        width: 200,
+        height: 112.5,
+        price: 25,
+        locked: false,
+        image: null,
+      };
+      const chairUpgrade = {
+        x: 650,
+        y: 350,
+        width: 200,
+        height: 112.5,
+        price: 50,
+        locked: true,
+        image: null,
+      };
+      const mouse = {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+      };
+      function raiLoad() {
+        coinToClick.image = loadImage("./coin.svg");
+        lockedImage = loadImage("./locked.svg");
+        shopUpgrade.image = loadImage("./shop.svg");
+        chairUpgrade.image = loadImage("./chair.svg");
+      }
+      function raiSetup() {
+        createCanvas(900, 900);
+        background(220);
+      }
+      function updateMousePosition() {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = width / rect.width;
+        const scaleY = height / rect.height;
+        let clientX = mouseX;
+        let clientY = mouseY;
+        mouse.x = (clientX - rect.left) * scaleX;
+        mouse.y = (clientY - rect.top) * scaleY;
+      }
+      function raiDraw() {
+        updateMousePosition();
+        noStroke();
+        //Middle (Clicker)
+        fill(255, 56, 8);
+        rect(300, 0, 300, height);
+        image(
+          coinToClick.image,
+          coinToClick.x,
+          coinToClick.y,
+          coinToClick.width,
+          coinToClick.height
+        );
+        //Left (Stats)
+        fill(35, 55, 75);
+        rect(0, 0, 300, height);
+        fontSize("35px");
+        fontFamily("'Consolas', monospace");
+        fill(255);
+        text(`Pièces: ${coins}`, 20, 120);
+        //Right (Upgrades)
+        fill(0, 0, 255);
+        rect(600, 0, 300, height);
+        fill(0);
+        rect(
+          shopUpgrade.x + 2,
+          shopUpgrade.y + 2,
+          shopUpgrade.width,
+          shopUpgrade.height
+        );
+        fill(23, 57, 200);
+        rect(
+          shopUpgrade.x,
+          shopUpgrade.y,
+          shopUpgrade.width,
+          shopUpgrade.height
+        );
+        fill(0);
+        rect(
+          chairUpgrade.x + 2,
+          chairUpgrade.y + 2,
+          chairUpgrade.width,
+          chairUpgrade.height
+        );
+        fill(23, 57, 200);
+        rect(
+          chairUpgrade.x,
+          chairUpgrade.y,
+          chairUpgrade.width,
+          chairUpgrade.height
+        );
+        fill(255);
+        fontSize("25px");
+        if (!shopUpgrade.locked) {
+          image(shopUpgrade.image, shopUpgrade.x, shopUpgrade.y, 200, 112.5);
+          text(
+            `Boutique: ${shopUpgrade.price}`,
+            shopUpgrade.x + shopUpgrade.width / 2 - 80,
+            shopUpgrade.y + shopUpgrade.height / 2 + 10
+          );
+        }
+        if (!chairUpgrade.locked) {
+          image(
+            chairUpgrade.image,
+            chairUpgrade.x + 60,
+            chairUpgrade.y,
+            80,
+            112.5
+          );
+          text(
+            `Chaise: ${chairUpgrade.price}`,
+            chairUpgrade.x + chairUpgrade.width / 2 - 80,
+            chairUpgrade.y + chairUpgrade.height / 2 + 10
+          );
+        }
+        if (shopUpgrade.locked) {
+          image(lockedImage, shopUpgrade.x + 50, shopUpgrade.y, 100, 112.5);
+        }
+        if (chairUpgrade.locked) {
+          image(lockedImage, chairUpgrade.x + 50, chairUpgrade.y, 100, 112.5);
+        }
+      }
+
+      function raiMousePressed() {
+        if (aabb(mouse, coinToClick)) {
+          coins += incrementor;
+        }
+        if (
+          aabb(shopUpgrade, mouse) &&
+          !shopUpgrade.locked &&
+          coins >= shopUpgrade.price
+        ) {
+          chairUpgrade.locked = false;
+          shopUpgrade.locked = true;
+          coins -= shopUpgrade.price;
+          incrementor++;
+        }
+        if (
+          aabb(chairUpgrade, mouse) &&
+          !chairUpgrade.locked &&
+          coins >= chairUpgrade.price
+        ) {
+          coinsPerSeconds++;
+          coins -= chairUpgrade.price;
+          chairUpgrade.price *= 1.12;
+          chairUpgrade.price = Math.round(chairUpgrade.price);
+        }
+      }
+      setInterval(() => {
+        if (coinsPerSeconds > 0) {
+          coins += coinsPerSeconds / 10;
+          coins = Math.round(coins * 10) / 10;
+        }
+      }, 100);
+    </script>
+  </body>
+</html>

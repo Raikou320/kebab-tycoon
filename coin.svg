@@ -1,0 +1,4 @@
+<svg viewBox="0 0 60 64" width="60" height="64" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="32" rx="30" ry="32" fill="gold"/>
+  <text font-family="'Consolas', monospace" x="22.5" font-size="35px" y="45">€</text>
+</svg>
