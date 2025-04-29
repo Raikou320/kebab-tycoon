@@ -18,9 +18,6 @@
     </style>
     <script>
       let lockedImage;
-      let coins = 0;
-      let incrementor = 1;
-      let coinsPerSeconds = 0;
       const coinToClick = {
         x: 330,
         y: 322,
@@ -28,22 +25,27 @@
         height: 256,
         image: null,
       };
+      let coins = parseInt(localStorage.getItem("raikou's-kebab-tycoon-coins")) || 0;
+      let incrementor = parseInt(localStorage.getItem("raikou's-kebab-tycoon-cpc")) || 1;
+      let coinsPerSeconds = parseInt(localStorage.getItem("raikou's-kebab-tycoon-cps")) || 0;
+
       const shopUpgrade = {
         x: 650,
         y: 200,
         width: 200,
         height: 112.5,
         price: 25,
-        locked: false,
+        locked: localStorage.getItem("raikou's-kebab-tycoon-shop-locked") === "true",
         image: null,
       };
+
       const chairUpgrade = {
         x: 650,
         y: 350,
         width: 200,
         height: 112.5,
-        price: 50,
-        locked: true,
+        price: parseFloat(localStorage.getItem("raikou's-kebab-tycoon-chair-price")) || 50,
+        locked: localStorage.getItem("raikou's-kebab-tycoon-chair-locked") === "true",
         image: null,
       };
       const mouse = {
@@ -156,7 +158,7 @@
 
       function raiMousePressed() {
         if (aabb(mouse, coinToClick)) {
-          coins += incrementor;
+          coins += parseInt(incrementor);
         }
         if (
           aabb(shopUpgrade, mouse) &&
@@ -167,6 +169,8 @@
           shopUpgrade.locked = true;
           coins -= shopUpgrade.price;
           incrementor++;
+          localStorage.setItem("raikou's-kebab-tycoon-chair-locked", false);
+          localStorage.setItem("raikou's-kebab-tycoon-shop-locked", true);
         }
         if (
           aabb(chairUpgrade, mouse) &&
@@ -177,13 +181,18 @@
           coins -= chairUpgrade.price;
           chairUpgrade.price *= 1.12;
           chairUpgrade.price = Math.round(chairUpgrade.price);
+          localStorage.setItem("raikou's-kebab-tycoon-chair-price", chairUpgrade.price);
         }
+        localStorage.setItem("raikou's-kebab-tycoon-coins", coins);
+        localStorage.setItem("raikou's-kebab-tycoon-cpc", incrementor);
+        localStorage.setItem("raikou's-kebab-tycoon-cps", coinsPerSeconds);
       }
       setInterval(() => {
         if (coinsPerSeconds > 0) {
           coins += coinsPerSeconds / 10;
           coins = Math.round(coins * 10) / 10;
         }
+        localStorage.setItem("raikou's-kebab-tycoon-coins", coins);
       }, 100);
     </script>
   </body>
